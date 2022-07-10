@@ -10,6 +10,8 @@ public class UIController : MonoBehaviour
     private TextMeshProUGUI textCurrentScore;
     [SerializeField]
     private TextMeshProUGUI textHighScore;
+    [SerializeField]
+    private GameObject panelGameOver;
     public void UpdateCurrentScore(int score)
     {
         textCurrentScore.text = score.ToString();
@@ -21,5 +23,13 @@ public class UIController : MonoBehaviour
     public void OnClickGoToMain()
     {
         SceneManager.LoadScene("Main");
+    }
+    public void OnClickRestart()
+    {
+        SceneManager.LoadScene("02");
+    }
+    public void OnGameOver()
+    {
+        panelGameOver.SetActive(true);
     }
 }
