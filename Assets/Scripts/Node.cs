@@ -29,7 +29,14 @@ public class Node : MonoBehaviour
             }
             if(neighborNode.placedBlock != null && originalNode.placedBlock != null)
             {
-                return farNode;
+                if(neighborNode.placedBlock.Numeric == originalNode.placedBlock.Numeric)
+                {
+                    return neighborNode;
+                }
+                else
+                {
+                    return farNode;
+                }
             }
             return neighborNode.FindTarget(originalNode, direction, neighborNode);
         }
