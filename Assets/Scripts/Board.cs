@@ -13,16 +13,27 @@ public class Board : MonoBehaviour
     private GameObject blockPrefab;
     [SerializeField]
     private Transform blockRect;
-   
+    [SerializeField]
+    private UIController uiController;
     public List<Node> NodeList { private set; get; }
     public Vector2Int BlockCount { private set; get; }
     public List<Block> blockList;
-
+    public int currentScore;
     public State state = State.Wait;
+    public int highScore;
+    public float blockSize;
     private void Awake()
     {
-        BlockCount = new Vector2Int(4, 4);
-        NodeList = nodeSpawner.SpawnNodes(this, BlockCount);
+        int count = PlayerPrefs.GetInt("BlockCount");
+        BlockCount = new Vector2Int(count, count);
+
+        blockSize = (1080 - 85 - 25 * (BlockCount.x - 1)) / BlockCount.x;
+
+        currentScore = 0;
+        highScore = PlayerPrefs.GetInt("HighScore");
+        uiController.UpdateHighScore(highScore);
+        uiController.UpdateCurrentScore(currentScore);
+        NodeList = nodeSpawner.SpawnNodes(this, BlockCount, blockSize);
         blockList = new List<Block>();
     }
     private void Start()
@@ -80,6 +91,8 @@ public class Board : MonoBehaviour
         GameObject clone = Instantiate(blockPrefab, blockRect);
         Block block = clone.GetComponent<Block>();
         Node node = NodeList[y * BlockCount.x + x];
+
+        clone.GetComponent<RectTransform>().sizeDelta = new Vector2(blockSize, blockSize);
         clone.GetComponent<RectTransform>().localPosition = node.localPosition;
         block.Setup();
         node.placedBlock = block;
@@ -198,6 +211,7 @@ public class Board : MonoBehaviour
             }
             removeBlocks.ForEach(x =>
             {
+                currentScore += x.Numeric * 2;
                 blockList.Remove(x);
                 Destroy(x.gameObject);
             });
@@ -210,6 +224,7 @@ public class Board : MonoBehaviour
             SpwanBlockToRandomNode();
 
             NodeList.ForEach(x => x.combined = false);
+            uiController.UpdateCurrentScore(currentScore);
         }
     }
     private bool IsGameOver()
@@ -238,5 +253,9 @@ public class Board : MonoBehaviour
     private void OnGameOver()
     {
         Debug.Log("GameOver");
+        if(currentScore > highScore)
+        {
+            PlayerPrefs.SetInt("HighScore", currentScore);
+        }
     }
 }

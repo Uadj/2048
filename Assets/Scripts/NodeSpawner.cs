@@ -1,17 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.UI;
 public class NodeSpawner : MonoBehaviour
 {
     [SerializeField]
     private GameObject nodePrefab;
     [SerializeField]
     private GameObject nodeRect;
-
+    [SerializeField]
+    private GridLayoutGroup gridLayoutGroup;
     
-    public List<Node> SpawnNodes(Board board, Vector2Int blockCount)
+    public List<Node> SpawnNodes(Board board, Vector2Int blockCount, float blockSize)
     {
+        gridLayoutGroup.cellSize = new Vector2(blockSize, blockSize);
+        //Debug.Log(blockCount * blockCount);
         List<Node> nodeList = new List<Node>(blockCount.x * blockCount.y);
         for(int y = 0; y < blockCount.y; ++y)
         {
